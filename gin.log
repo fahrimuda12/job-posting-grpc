@@ -4,14 +4,14 @@
  - using env:	export GIN_MODE=release
  - using code:	gin.SetMode(gin.ReleaseMode)
 
-[GIN-debug] GET    /                         --> job-posting/gateway/routes.Routes.func1 (3 handlers)
-[GIN-debug] POST   /auth/login               --> job-posting/gateway/handler.LoginUser (3 handlers)
-[GIN-debug] POST   /auth/register            --> job-posting/gateway/handler.RegisterUser (3 handlers)
-[GIN-debug] GET    /company                  --> job-posting/gateway/handler.GetCompany (3 handlers)
-[GIN-debug] GET    /company/:id              --> job-posting/gateway/handler.GetCompanyByID (3 handlers)
-[GIN-debug] POST   /company/create           --> job-posting/gateway/handler.CompanyCreate (3 handlers)
-[GIN-debug] PUT    /company/update/:id       --> job-posting/gateway/handler.CompanyUpdate (3 handlers)
-[GIN-debug] DELETE /company/delete/:id       --> job-posting/gateway/handler.CompanyDelete (3 handlers)
+[GIN-debug] GET    /                         --> job-posting/gateway/routes.Routes.func1 (5 handlers)
+[GIN-debug] POST   /auth/login               --> job-posting/gateway/handler.LoginUser (5 handlers)
+[GIN-debug] POST   /auth/register            --> job-posting/gateway/handler.RegisterUser (5 handlers)
+[GIN-debug] GET    /company                  --> job-posting/gateway/handler.GetCompany (5 handlers)
+[GIN-debug] GET    /company/:id              --> job-posting/gateway/handler.GetCompanyByID (5 handlers)
+[GIN-debug] POST   /company/create           --> job-posting/gateway/handler.CompanyCreate (5 handlers)
+[GIN-debug] PUT    /company/update/:id       --> job-posting/gateway/handler.CompanyUpdate (5 handlers)
+[GIN-debug] DELETE /company/delete/:id       --> job-posting/gateway/handler.CompanyDelete (5 handlers)
 [GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
 Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
 [GIN-debug] Listening and serving HTTP on :4050
