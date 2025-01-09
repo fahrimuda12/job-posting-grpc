@@ -2,13 +2,16 @@ package main
 
 import (
 	"io"
+	"job-posting/core/config"
 	"job-posting/gateway/routes"
+	"log"
 	"net/http"
 	"os"
 	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"golang.org/x/time/rate"
 )
 
@@ -24,6 +27,21 @@ func rateLimiter(c *gin.Context) {
     c.Next()
 }
 
+func LoadEnvs() {
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+}
+
+
+func init() {
+	LoadEnvs()
+	config.DBInit()
+
+}
+
 
 func main() {
 	gin.DisableConsoleColor()
@@ -31,6 +49,7 @@ func main() {
    // Logging to a file.
    f, _ := os.Create("gin.log")
    gin.DefaultWriter = io.MultiWriter(f)
+
 	router := gin.Default()
 
 	// use rate limiter
@@ -48,9 +67,6 @@ func main() {
 		},
 		MaxAge: 12 * time.Hour,
 	 }))
-
-	//  membuat rate limiter
-	// limiter := tollbooth.NewLimiter(1, nil)
 
 	routes.Routes(router)
 	
