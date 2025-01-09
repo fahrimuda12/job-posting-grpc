@@ -3,13 +3,13 @@ package handler
 import (
 	"context"
 	"fmt"
+	"job-posting/gateway/helper"
 	authpb "job-posting/gen/go/protos/auth"
 	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/status"
 )
@@ -58,21 +58,11 @@ func LoginUser(c *gin.Context) {
 	})
 
 	if err != nil {
-		if status.Code(err) != codes.InvalidArgument {
-			log.Printf("Received unexpected error: %v", err)
-			errorMessage := status.Convert(err).Message()
-			c.AbortWithStatusJSON(500, gin.H{"status": false, "error": errorMessage})
-			return
-		} else if status.Code(err) == codes.Canceled {
-			log.Printf("Received unexpected error: %v", err)
-			c.AbortWithStatusJSON(500, gin.H{"status": false, "error": err.Error()})
-			return	
-		} else {
-		log.Printf("Received error: %v", err)
-		log.Print(err)
-		c.AbortWithStatusJSON(500, gin.H{"status": false, "error": err.Error()})
-			return
-		}
+		statusCode := status.Code(err)
+		code := helper.SwitchStatusToCode(int(statusCode))
+		message := status.Convert(err).Message()
+		c.JSON(code, helper.ErrorResponse(message, statusCode.String()))
+		return
 	}
 
 	c.JSON(200, res)
@@ -105,7 +95,10 @@ func RegisterUser(c *gin.Context) {
 	})
 
 	if err != nil {
-		c.AbortWithStatusJSON(500, gin.H{"status": false, "error": err})
+		statusCode := status.Code(err)
+		code := helper.SwitchStatusToCode(int(statusCode))
+		message := status.Convert(err).Message()
+		c.JSON(code, helper.ErrorResponse(message, statusCode.String()))
 		return
 	}
 

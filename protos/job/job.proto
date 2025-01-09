@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+package protos.job;
+
+option go_package = "job-posting/gen/go/job;jobpb";
+
+
+message Job {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  Company company = 4;
+}
+
+message Company {
+  string id = 1;
+  string name = 2;
+}
+
+message GetJobRequest {
+  int32 page = 1;
+  int32 limit = 2;
+}
+
+message GetJobResponse {
+  bool status = 1;
+  string message = 2;
+  repeated Job jobs = 3;
+  int32 page_now = 4;
+  int32 limit = 5;
+  int64 total_data = 6;
+}
+
+message DetailJobRequest {
+  string id = 1;
+}
+
+message DetailJobResponse {
+  bool status = 1;
+  string message = 2;
+  Job job = 3;
+}
+
+message CreateJobRequest {
+  string title = 1;
+  string description = 2;
+  string company_id = 3;
+}
+
+message CreateJobResponse {
+  bool status = 1;
+  string message = 2;
+}
+
+message UpdateJobRequest {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  string company_id = 4;
+}
+
+message UpdateJobResponse {
+  bool status = 1;
+  string message = 2;
+}
+
+message DeleteJobRequest {
+  string id = 1;
+}
+
+message DeleteJobResponse {
+  bool status = 1;
+  string message = 2;
+}
+
+service JobService {
+  rpc GetJob (GetJobRequest) returns (GetJobResponse);
+  rpc DetailJob (DetailJobRequest) returns (DetailJobResponse);
+  rpc CreateJob (CreateJobRequest) returns (CreateJobResponse);
+  rpc UpdateJob (UpdateJobRequest) returns (UpdateJobResponse);
+  rpc DeleteJob (DeleteJobRequest) returns (DeleteJobResponse);
+}
+
+
+// proto command
+// protoc -I=auth/proto/ --go_out=auth/proto/ --go_opt=paths=source_relative \
+//     --go-grpc_out=auth/proto/ --go-grpc_opt=paths=source_relative \
+//     auth/proto/auth.proto
+
+// protoc -I=auth/proto/ --go_out=auth/proto/ --go_opt=paths=source_relative --go-grpc_out=auth/proto/ --go-grpc_opt=paths=source_relative auth/proto/auth.proto 

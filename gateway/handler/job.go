@@ -3,7 +3,7 @@ package handler
 import (
 	"context"
 	"job-posting/gateway/helper"
-	companypb "job-posting/gen/go/protos/company"
+	jobpb "job-posting/gen/go/protos/job"
 	"log"
 	"net/http"
 
@@ -13,19 +13,19 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-type CompanyHandler struct {}
+type JobHandler struct {}
 
-var company CompanyHandler
+var job JobHandler
 
 
-type GetPayloadCompany struct {
+type GetPayloadJob struct {
 	Page  int32 `form:"page"`
 	Limit int32 `form:"limit"`
 }
 
-func (a *CompanyHandler) connGrpc() *grpc.ClientConn {
+func (a *JobHandler) connGrpc() *grpc.ClientConn {
 	var conn *grpc.ClientConn
-	conn, err := grpc.NewClient("localhost:2010", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient("localhost:2020", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Printf("did not connect: %v", err)
 	}
@@ -33,30 +33,30 @@ func (a *CompanyHandler) connGrpc() *grpc.ClientConn {
 	return conn
 }
 
-func GetCompany(c *gin.Context) {
+func GetJob(c *gin.Context) {
 	var (
-		paramsGetCompany GetPayloadCompany
+		paramsGetJob GetPayloadJob
 	)
 
 	// validate input
-	if err := c.ShouldBindQuery(&paramsGetCompany); err != nil {
+	if err := c.ShouldBindQuery(&paramsGetJob); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error parameter": err.Error()})
 		return
 	}
 
-	page := paramsGetCompany.Page
+	page := paramsGetJob.Page
 	if page == 0 {
 		page = 1
 	}
-	limit := paramsGetCompany.Limit
+	limit := paramsGetJob.Limit
 	if limit == 0 {
 		limit = 10
 	}
 
-	conn := company.connGrpc()
+	conn := job.connGrpc()
 	defer conn.Close()
-	u := companypb.NewCompanyServiceClient(conn)
-	res, err := u.GetCompany(context.Background(), &companypb.GetCompanyRequest{
+	u := jobpb.NewJobServiceClient(conn)
+	res, err := u.GetJob(context.Background(), &jobpb.GetJobRequest{
 		Page:   page,
 		Limit:  limit,
 	})
@@ -72,13 +72,13 @@ func GetCompany(c *gin.Context) {
 	c.JSON(200, res)
 }
 
-func GetCompanyByID(c *gin.Context) {
+func GetJobByID(c *gin.Context) {
 	id := c.Param("id")
 
-	conn := company.connGrpc()
+	conn := job.connGrpc()
 	defer conn.Close()
-	u := companypb.NewCompanyServiceClient(conn)
-	res, err := u.DetailCompany(context.Background(), &companypb.DetailCompanyRequest{Id: id})
+	u := jobpb.NewJobServiceClient(conn)
+	res, err := u.DetailJob(context.Background(), &jobpb.DetailJobRequest{Id: id})
 
 	if err != nil {
 		statusCode := status.Code(err)
@@ -91,28 +91,32 @@ func GetCompanyByID(c *gin.Context) {
 	c.JSON(200, res)
 }
 
-type CreatePayloadCompany struct {
-	Name    string	`json:"name" binding:"required"`
+type CreatePayloadJob struct {
+	Title   	string	`json:"title" binding:"required"`
+	Description string	`json:"description" binding:"required"`
+	CompanyId 	string	`json:"company_id" binding:"required"`
 }
 
 
-func CompanyCreate(c *gin.Context) {
+func JobCreate(c *gin.Context) {
 	var (
-		paramCompanyCreate CreatePayloadCompany
+		paramJobCreate CreatePayloadJob
 	)
 
 	// validate input
-	if err := c.ShouldBindJSON(&paramCompanyCreate); err != nil {
+	if err := c.ShouldBindJSON(&paramJobCreate); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error parameter": err.Error()})
 		return
 	}
 
 
-	conn := company.connGrpc()
+	conn := job.connGrpc()
 	defer conn.Close()
-	u := companypb.NewCompanyServiceClient(conn)
-	res, err := u.CreateCompany(context.Background(), &companypb.CreateCompanyRequest{
-		Name:   paramCompanyCreate.Name,
+	u := jobpb.NewJobServiceClient(conn)
+	res, err := u.CreateJob(context.Background(), &jobpb.CreateJobRequest{
+		Title:   paramJobCreate.Title,
+		Description: paramJobCreate.Description,
+		CompanyId: paramJobCreate.CompanyId,
 	})
 
 	if err != nil {
@@ -121,35 +125,40 @@ func CompanyCreate(c *gin.Context) {
 		message := status.Convert(err).Message()
 		c.JSON(code, helper.ErrorResponse(message, statusCode.String()))
 		return
+
 	}
 
 	c.JSON(200, res)
 }
 
-type UpdatePayloadCompany struct {
-	Name    	string	`json:"name" binding:"required"`
+type UpdatePayload struct {
+	Title  	string	`json:"title" binding:"required"`
+	Description string	`json:"description" binding:"required"`
+	CompanyId 	string	`json:"company_id" binding:"required"`
 }
 
 
-func CompanyUpdate(c *gin.Context) {
+func JobUpdate(c *gin.Context) {
 	var (
-		paramCompanyUpdate UpdatePayloadCompany
+		paramJobUpdate UpdatePayload
 	)
 
 	// validate input
-	if err := c.ShouldBindJSON(&paramCompanyUpdate); err != nil {
+	if err := c.ShouldBindJSON(&paramJobUpdate); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error parameter": err.Error()})
 		return
 	}
 
 	Id := c.Param("id")
 
-	conn := company.connGrpc()
+	conn := job.connGrpc()
 	defer conn.Close()
-	u := companypb.NewCompanyServiceClient(conn)
-	res, err := u.UpdateCompany(context.Background(), &companypb.UpdateCompanyRequest{
+	u := jobpb.NewJobServiceClient(conn)
+	res, err := u.UpdateJob(context.Background(), &jobpb.UpdateJobRequest{
 		Id:     Id,
-		Name:   paramCompanyUpdate.Name,
+		Title:  paramJobUpdate.Title,
+		Description: paramJobUpdate.Description,
+		CompanyId: paramJobUpdate.CompanyId,
 	})
 
 	if err != nil {
@@ -158,17 +167,18 @@ func CompanyUpdate(c *gin.Context) {
 		message := status.Convert(err).Message()
 		c.JSON(code, helper.ErrorResponse(message, statusCode.String()))
 		return
+
 	}
 
 	c.JSON(200, res)
 }
 
-func CompanyDelete(c *gin.Context) {
+func JobDelete(c *gin.Context) {
 	id := c.Param("id")
-	conn := company.connGrpc()
+	conn := job.connGrpc()
 	defer conn.Close()
-	u := companypb.NewCompanyServiceClient(conn)
-	res, err := u.DeleteCompany(context.Background(), &companypb.DeleteCompanyRequest{Id: id})
+	u := jobpb.NewJobServiceClient(conn)
+	res, err := u.DeleteJob(context.Background(), &jobpb.DeleteJobRequest{Id: id})
 
 	if err != nil {
 		statusCode := status.Code(err)
@@ -176,6 +186,7 @@ func CompanyDelete(c *gin.Context) {
 		message := status.Convert(err).Message()
 		c.JSON(code, helper.ErrorResponse(message, statusCode.String()))
 		return
+
 	}
 
 	c.JSON(200, res)

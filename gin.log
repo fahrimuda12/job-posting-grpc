@@ -12,7 +12,11 @@
 [GIN-debug] POST   /company/create           --> job-posting/gateway/handler.CompanyCreate (6 handlers)
 [GIN-debug] PUT    /company/update/:id       --> job-posting/gateway/handler.CompanyUpdate (6 handlers)
 [GIN-debug] DELETE /company/delete/:id       --> job-posting/gateway/handler.CompanyDelete (7 handlers)
+[GIN-debug] GET    /job                      --> job-posting/gateway/handler.GetJob (6 handlers)
+[GIN-debug] GET    /job/:id                  --> job-posting/gateway/handler.GetJobByID (6 handlers)
+[GIN-debug] POST   /job/create               --> job-posting/gateway/handler.JobCreate (6 handlers)
+[GIN-debug] PUT    /job/update/:id           --> job-posting/gateway/handler.JobUpdate (6 handlers)
+[GIN-debug] DELETE /job/delete/:id           --> job-posting/gateway/handler.JobDelete (6 handlers)
 [GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
 Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
 [GIN-debug] Listening and serving HTTP on :4050
-[GIN] 2025/01/09 - 19:04:56 | 401 |    145.2595ms |             ::1 | POST     "/company/create"

@@ -85,7 +85,7 @@ func (a *AuthService) Login(ctx context.Context, req *pb.LoginRequest)  (*pb.Log
 
 	err := a.DB.Where("email = ?", req.GetEmail()).First(&userModel).Error
 	if err != nil {
-		return nil,  status.Errorf(codes.Canceled, "user not found")
+		return nil,  status.Errorf(codes.NotFound, "user not found")
 
 	}
 

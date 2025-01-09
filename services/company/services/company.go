@@ -2,12 +2,13 @@ package services
 
 import (
 	"context"
-	"errors"
 	"job-posting/services/company/models"
 	"log"
 
 	pb "job-posting/gen/go/protos/company"
 
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
 )
 
@@ -35,13 +36,13 @@ func (a *CompanyService) GetCompany(ctx context.Context, req *pb.GetCompanyReque
 	// get all company with pagination
 	err := a.DB.Limit(int(limit)).Offset(int(offset)).Find(&companyModel).Error
 	if err != nil {
-		return nil, errors.New(err.Error())
+		return nil, status.Errorf(codes.Internal, "Error when query data company")
 	}
 
 	// count all data in tabel company
 	err = a.DB.Model(&models.Company{}).Count(&totalCompanies).Error
 	if err != nil {
-		return nil, errors.New(err.Error())
+		return nil, status.Errorf(codes.Internal, "Error when count data company")
 	}
 	
 	var companyList []*pb.Company
@@ -72,7 +73,7 @@ func (a *CompanyService) DetailCompany(ctx context.Context, req *pb.DetailCompan
 
 	err := a.DB.First(&companyModel, "id = ?", req.GetId()).Error
 	if err != nil {
-		return nil, errors.New(err.Error())
+		return nil, status.Errorf(codes.NotFound, "Company not found")
 	}
 
 	data := pb.DetailCompanyResponse{
@@ -101,7 +102,7 @@ func (a *CompanyService) CreateCompany(ctx context.Context, req *pb.CreateCompan
 
 	err := a.DB.Create(&companyModel).Error
 	if err != nil {
-		return nil, errors.New(err.Error())
+		return nil, status.Errorf(codes.Internal, "Error when create company")
 	}
 	
 	data := pb.CreateCompanyResponse{
@@ -120,7 +121,7 @@ func (a *CompanyService) UpdateCompany(ctx context.Context, req *pb.UpdateCompan
 
 	err := a.DB.First(&companyModel,"id = ?", req.GetId()).Error
 	if err != nil {
-		return nil, errors.New(err.Error())
+		return nil, status.Errorf(codes.NotFound, "Company not found")
 	}
 
 	companyModel.Name = req.GetName()
@@ -128,7 +129,7 @@ func (a *CompanyService) UpdateCompany(ctx context.Context, req *pb.UpdateCompan
 
 	err = a.DB.Save(&companyModel).Error
 	if err != nil {
-		return nil, errors.New(err.Error())
+		return nil, status.Errorf(codes.Internal, "Error when update company")
 	}
 	
 	data := pb.UpdateCompanyResponse{
@@ -147,12 +148,12 @@ func (a *CompanyService) DeleteCompany(ctx context.Context, req *pb.DeleteCompan
 
 	err := a.DB.First(&companyModel, "id = ?",req.GetId()).Error
 	if err != nil {
-		return nil, errors.New(err.Error())
+		return nil, status.Errorf(codes.NotFound, "Company not found")
 	}
 
 	err = a.DB.Delete(&companyModel).Error
 	if err != nil {
-		return nil, errors.New(err.Error())
+		return nil, status.Errorf(codes.Internal, "Error when delete company")
 	}
 	
 	data := pb.DeleteCompanyResponse{

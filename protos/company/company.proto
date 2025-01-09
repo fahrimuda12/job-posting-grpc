@@ -10,8 +10,8 @@ message Company {
 }
 
 message GetCompanyRequest {
-  int32 page = 2;
-  int32 limit = 3;
+  int32 page = 1;
+  int32 limit = 2;
 }
 
 message GetCompanyResponse {
