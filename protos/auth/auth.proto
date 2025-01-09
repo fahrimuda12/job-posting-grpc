@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package protos.auth;
+
+option go_package = "job-posting/gen/go/auth;authpb";
+
+message User {
+  // pmongo.ObjectId id = 1 [(tagger.tags) = "bson:\"_id,omitempty\"" ];
+  string id = 1;
+  string name = 2;
+  string email = 3;
+  string password = 4;
+  string role_id = 5;
+}
+
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  bool status = 1;
+  string message = 2;
+  string token = 3;
+}
+
+message RegisterRequest {
+  string name = 1;
+  string email = 2;
+  string password = 3;
+  string role_id = 4;
+}
+
+message RegisterResponse {
+  bool status = 1;
+  string message = 2;
+}
+
+service AuthService {
+  rpc Login (LoginRequest) returns (LoginResponse);
+  rpc Register (RegisterRequest) returns (RegisterResponse);
+}
+
+
+// proto command
+// protoc -I=auth/proto/ --go_out=auth/proto/ --go_opt=paths=source_relative \
+//     --go-grpc_out=auth/proto/ --go-grpc_opt=paths=source_relative \
+//     auth/proto/auth.proto
+
+// protoc -I=auth/proto/ --go_out=auth/proto/ --go_opt=paths=source_relative --go-grpc_out=auth/proto/ --go-grpc_opt=paths=source_relative auth/proto/auth.proto 
