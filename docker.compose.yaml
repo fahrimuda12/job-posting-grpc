@@ -1,0 +1,57 @@
+# buat compose untuk menjalankan container postgres dan pgadmin di docker dan jalankan gateway dan 3 service auth, company, dan job di docker
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8080:80"
+    depends_on:
+      - postgres
+
+  gateway:
+    image: my-gateway-image
+    ports:
+      - "8000:8000"
+    depends_on:
+      - auth
+      - company
+      - job
+
+  auth:
+    image: my-auth-service-image
+    ports:
+      - "8001:8001"
+    depends_on:
+      - postgres
+
+  company:
+    image: my-company-service-image
+    ports:
+      - "8002:8002"
+    depends_on:
+      - postgres
+
+  job:
+    image: my-job-service-image
+    ports:
+      - "8003:8003"
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
