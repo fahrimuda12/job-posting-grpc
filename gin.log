@@ -20,3 +20,4 @@
 [GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
 Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
 [GIN-debug] Listening and serving HTTP on :4050
+[GIN] 2025/01/09 - 23:04:12 | 200 |    504.7452ms |             ::1 | GET      "/job/67aebf9a-b16c-4f7b-bb9b-a9835f6f9b12"

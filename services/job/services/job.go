@@ -37,7 +37,7 @@ func (a *JobService) GetJob(ctx context.Context, req *pb.GetJobRequest)  (*pb.Ge
 	offset := (page - 1) * limit
 
 	// get all job with pagination
-	err := a.DB.Limit(int(limit)).Offset(int(offset)).Find(&jobModel).Error
+	err := a.DB.Limit(int(limit)).Offset(int(offset)).Preload("Company").Find(&jobModel).Error
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Error when query data job")
 	}
@@ -85,7 +85,7 @@ func (a *JobService) DetailJob(ctx context.Context, req *pb.DetailJobRequest)  (
 		jobModel models.Job
 	)
 
-	err := a.DB.First(&jobModel, "id = ?", req.GetId()).Error
+	err := a.DB.Preload("Company").First(&jobModel, "id = ?", req.GetId()).Error
 	if err != nil {
 		return nil, status.Errorf(codes.NotFound, "Job not found")
 	}
