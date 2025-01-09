@@ -19,4 +19,13 @@ func Routes(routes *gin.Engine) {
 	routes.POST("/auth/login", handler.LoginUser)
 	routes.POST("/auth/register", handler.RegisterUser)
 
+	// route group /company
+	company := routes.Group("/company")
+	company.GET("", handler.GetCompany)
+	company.GET("/:id", handler.GetCompanyByID)
+	company.POST("/create", handler.CompanyCreate)
+	company.PUT("/update/:id", handler.CompanyUpdate)
+	company.DELETE("/delete/:id", handler.CompanyDelete)
+	
+	
 }

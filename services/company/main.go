@@ -2,9 +2,6 @@ package main
 
 import (
 	"fmt"
-	"job-posting/core/config"
-	"job-posting/services/auth/migrations"
-	"job-posting/services/auth/services"
 
 	"log"
 	"net"
@@ -13,7 +10,10 @@ import (
 	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
 
-	pb "job-posting/gen/go/protos/auth"
+	"job-posting/core/config"
+	pb "job-posting/gen/go/protos/company"
+	"job-posting/services/company/migrations"
+	"job-posting/services/company/services"
 )
 
 func LoadEnvs() {
@@ -32,7 +32,7 @@ func init() {
 }
 
 func main() {
-	l := log.New(os.Stdout, "auth: ", log.LstdFlags)
+	l := log.New(os.Stdout, "company: ", log.LstdFlags)
 
 	//inisialiasai Gin
 	db := config.DBInit()
@@ -40,15 +40,15 @@ func main() {
 	// Run database migrations
 	migrations.Migrate(db)
 
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", "2000"))
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", "2010"))
 	if err != nil {
 		log.Fatalf("Couldn't create connection tcp %v", err)
 	}
 
 	srv := grpc.NewServer()
-	authSRV := services.NewAuthService(l, db)
-	pb.RegisterAuthServiceServer(srv, authSRV)
-	log.Printf("Server start at port %s", "2000")
+	companyService := services.NewCompanyService(l, db)
+	pb.RegisterCompanyServiceServer(srv, companyService)
+	log.Printf("Server start at port %s", "2010")
 
 	srv.Serve(lis)
 }

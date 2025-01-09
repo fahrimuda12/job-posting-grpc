@@ -2,7 +2,8 @@ package middleware
 
 import (
 	"fmt"
-	"job-posting/services/auth/config"
+
+	"job-posting/core/config"
 	"job-posting/services/auth/models"
 	"net/http"
 	"os"

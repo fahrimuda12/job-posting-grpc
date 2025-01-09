@@ -9,17 +9,64 @@ message Company {
   string name = 2;
 }
 
-message CreateRequest {
+message GetCompanyRequest {
+  int32 page = 2;
+  int32 limit = 3;
+}
+
+message GetCompanyResponse {
+  bool status = 1;
+  string message = 2;
+  repeated Company companies = 3;
+  int32 page_now = 4;
+  int32 limit = 5;
+  int64 total_data = 6;
+}
+
+message DetailCompanyRequest {
+  string id = 1;
+}
+
+message DetailCompanyResponse {
+  bool status = 1;
+  string message = 2;
+  Company company = 3;
+}
+
+message CreateCompanyRequest {
   string name = 1;
 }
 
-message CreateResponse {
+message CreateCompanyResponse {
+  bool status = 1;
+  string message = 2;
+}
+
+message UpdateCompanyRequest {
+  string id = 1;
+  string name = 2;
+}
+
+message UpdateCompanyResponse {
+  bool status = 1;
+  string message = 2;
+}
+
+message DeleteCompanyRequest {
+  string id = 1;
+}
+
+message DeleteCompanyResponse {
   bool status = 1;
   string message = 2;
 }
 
 service CompanyService {
-  rpc Create (CreateRequest) returns (CreateResponse);
+  rpc GetCompany (GetCompanyRequest) returns (GetCompanyResponse);
+  rpc DetailCompany (DetailCompanyRequest) returns (DetailCompanyResponse);
+  rpc CreateCompany (CreateCompanyRequest) returns (CreateCompanyResponse);
+  rpc UpdateCompany (UpdateCompanyRequest) returns (UpdateCompanyResponse);
+  rpc DeleteCompany (DeleteCompanyRequest) returns (DeleteCompanyResponse);
 }
 
 
